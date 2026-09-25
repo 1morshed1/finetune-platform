@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Fine-Tuning Platform</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header>
+    <span class="logo">🔧</span>
+    <h1>Fine-Tuning Platform</h1>
+    <span class="cfg" id="cfg"></span>
+  </header>
+
+  <nav>
+    <button data-view="datasets" class="active">Datasets</button>
+    <button data-view="jobs">Jobs</button>
+    <button data-view="models">Leaderboard</button>
+    <button data-view="playground">Playground</button>
+  </nav>
+
+  <main>
+    <!-- ============ DATASETS ============ -->
+    <section class="view active" id="view-datasets">
+      <div class="grid cols-2">
+        <div class="card">
+          <h2>Upload dataset</h2>
+          <p class="small muted">JSONL, one <span class="mono">{"prompt": ..., "completion": ...}</span> per line.
+            Add an optional <span class="mono">"label"</span> field for a stratified split.</p>
+          <label>File</label>
+          <input type="file" id="ds-file" accept=".jsonl,.json,.txt" />
+          <label>Name (optional)</label>
+          <input type="text" id="ds-name" placeholder="my-dataset" />
+          <div style="margin-top:14px"><button class="btn" id="ds-upload-btn">Upload &amp; validate</button></div>
+          <p class="small muted" style="margin-top:10px">No file handy? Run <span class="mono">uv run ftp sample sample.jsonl</span>.</p>
+        </div>
+        <div class="card">
+          <h2>Datasets</h2>
+          <table id="ds-table"><thead><tr><th>id</th><th>name</th><th>examples</th><th>status</th><th></th></tr></thead><tbody></tbody></table>
+        </div>
+      </div>
+      <div class="card hidden" id="ds-report"></div>
+    </section>
+
+    <!-- ============ JOBS ============ -->
+    <section class="view" id="view-jobs">
+      <div class="grid cols-2">
+        <div class="card">
+          <h2>New fine-tune job</h2>
+          <label>Dataset (ready only)</label>
+          <select id="job-dataset"></select>
+          <label>Base model</label>
+          <input type="text" id="job-model" value="demo" placeholder="demo or a HF model id" />
+          <label>Hyperparameters (JSON)</label>
+          <textarea id="job-hp">{"epochs": 3, "batch_size": 8, "learning_rate": 0.0002, "lora_r": 8}</textarea>
+          <div style="margin-top:12px"><button class="btn" id="job-create-btn">Start fine-tune</button></div>
+        </div>
+        <div class="card">
+          <h2>Jobs <button class="btn secondary small grow0" id="jobs-refresh" style="float:right">refresh</button></h2>
+          <table id="jobs-table"><thead><tr><th>id</th><th>model</th><th>status</th><th>progress</th><th></th></tr></thead><tbody></tbody></table>
+        </div>
+      </div>
+
+      <div class="card hidden" id="job-detail">
+        <div id="job-head"></div>
+        <div class="grid cols-2" style="margin-top:14px">
+          <div>
+            <h3>Training curves</h3>
+            <canvas id="loss-chart"></canvas>
+          </div>
+          <div>
+            <h3>Logs (live via SSE)</h3>
+            <pre class="logs" id="job-logs"></pre>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ LEADERBOARD ============ -->
+    <section class="view" id="view-models">
+      <div class="card">
+        <h2>Model leaderboard</h2>
+        <p class="small muted">Ranked by validation loss (lower is better). Relative improvement is vs the base model.</p>
+        <table id="models-table"><thead><tr><th>#</th><th>model</th><th>status</th><th>eval loss</th><th>vs base</th><th></th></tr></thead><tbody></tbody></table>
+      </div>
+    </section>
+
+    <!-- ============ PLAYGROUND ============ -->
+    <section class="view" id="view-playground">
+      <div class="card">
+        <h2>Base vs fine-tuned</h2>
+        <p class="small muted">Deploy a model with the <span class="mono">local</span> backend, then compare its output to the base model on the same prompt.</p>
+        <label>Deployed endpoint</label>
+        <select id="pg-model"></select>
+        <label>Prompt</label>
+        <textarea id="pg-prompt" placeholder="Explain gravity in one sentence.">Explain gravity in one sentence for a beginner.</textarea>
+        <div style="margin-top:12px"><button class="btn" id="pg-run-btn">Compare</button></div>
+        <div class="grid cols-2 hidden" id="pg-result" style="margin-top:16px">
+          <div class="compare-col" id="pg-base"></div>
+          <div class="compare-col" id="pg-ft"></div>
+        </div>
+        <p class="small muted" id="pg-note" style="margin-top:8px"></p>
+      </div>
+    </section>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>
