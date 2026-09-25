@@ -26,3 +26,7 @@ data_store/*
 
 # OS junk
 .DS_Store
+
+# Playwright MCP scratch output
+.playwright-mcp/
+job-detail.png
