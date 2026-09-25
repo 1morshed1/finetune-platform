@@ -18,14 +18,14 @@ Design notes:
 from __future__ import annotations
 
 import secrets
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 
 from sqlalchemy import JSON, DateTime, Float, ForeignKey, Integer, String, Text
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
 
 
 def _utcnow() -> datetime:
-    return datetime.now(timezone.utc)
+    return datetime.now(UTC)
 
 
 def new_id(prefix: str) -> str:
@@ -148,7 +148,8 @@ class ModelRecord(Base):
     hyperparameters: Mapped[dict] = mapped_column(JSON, default=dict)
     metrics: Mapped[dict] = mapped_column(JSON, default=dict)          # final training/eval metrics
     comparison_vs_base: Mapped[dict | None] = mapped_column(JSON, nullable=True)
-    artifact_path: Mapped[str | None] = mapped_column(String, nullable=True)  # LoRA adapter / weights
+    # Path to the LoRA adapter / weights on disk.
+    artifact_path: Mapped[str | None] = mapped_column(String, nullable=True)
 
     status: Mapped[str] = mapped_column(String, default=ModelStatus.REGISTERED)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=_utcnow)
@@ -163,7 +164,8 @@ class Deployment(Base):
     model_id: Mapped[str] = mapped_column(ForeignKey("models.id"), nullable=False)
     backend: Mapped[str] = mapped_column(String, default="local")
     endpoint_url: Mapped[str | None] = mapped_column(String, nullable=True)
-    status: Mapped[str] = mapped_column(String, default="deploying")  # deploying|live|failed|stopped
+    # deploying | live | failed | stopped
+    status: Mapped[str] = mapped_column(String, default="deploying")
     canary_percent: Mapped[int] = mapped_column(Integer, default=100)
     detail: Mapped[dict | None] = mapped_column(JSON, nullable=True)  # rendered manifest / notes
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=_utcnow)
