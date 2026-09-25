@@ -16,6 +16,7 @@ you want the story in order.
 - [`learning/03-orchestration-and-training.md`](learning/03-orchestration-and-training.md)
 - [`learning/04-registry-and-deploy.md`](learning/04-registry-and-deploy.md)
 - [`learning/05-api-and-dashboard.md`](learning/05-api-and-dashboard.md)
+- [`learning/06-infrastructure.md`](learning/06-infrastructure.md)
 
 ### 2. Architecture Decision Records — `adr/`
 Short, dated records of *decisions* and their alternatives. Read one when you
@@ -29,6 +30,7 @@ wonder "why did they do X and not Y?".
 ### 3. Subsystem deep-dives — `*.md`
 Longer explainers on one topic each. Read when you want the mechanics.
 
+- [`architecture.md`](architecture.md) — one-page system map (control/data plane, the swappable seams)
 - [`concepts-fine-tuning.md`](concepts-fine-tuning.md) — what fine-tuning / LoRA actually is
 - [`data-validation.md`](data-validation.md) — the validation pipeline internals (MinHash, perplexity, cost)
 

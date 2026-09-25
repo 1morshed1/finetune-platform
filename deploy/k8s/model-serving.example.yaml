@@ -1,0 +1,73 @@
+# Rendered by ftp.deploy.k8s for model model_demo01 (llama-3-8b-ft v2)
+# Base model: meta-llama/Meta-Llama-3-8B | LoRA adapter: s3://ftp-artifacts/job_demo01/adapter
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ft-dep-demo01
+  labels:
+    app: ft-dep-demo01
+    ftp/model-id: "model_demo01"
+    ftp/base-model: "meta-llama/Meta-Llama-3-8B"
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: ft-dep-demo01
+  template:
+    metadata:
+      labels:
+        app: ft-dep-demo01
+    spec:
+      containers:
+        - name: inference
+          # vLLM serving the base model with the LoRA adapter mounted.
+          image: vllm/vllm-openai:latest
+          args:
+            - "--model=meta-llama/Meta-Llama-3-8B"
+            - "--enable-lora"
+            - "--lora-modules"
+            - "ft=s3://ftp-artifacts/job_demo01/adapter"
+          ports:
+            - containerPort: 8000
+          resources:
+            limits:
+              nvidia.com/gpu: "1"
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 8000
+            initialDelaySeconds: 20
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ft-dep-demo01
+spec:
+  selector:
+    app: ft-dep-demo01
+  ports:
+    - port: 80
+      targetPort: 8000
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: ft-dep-demo01
+  annotations:
+    # Canary: send 10% of traffic here; the rest stays on the
+    # incumbent model. Watch error rate, then ramp to 100 or roll back.
+    nginx.ingress.kubernetes.io/canary: "true"
+    nginx.ingress.kubernetes.io/canary-weight: "10"
+spec:
+  rules:
+    - host: ft-dep-demo01.models.local
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: ft-dep-demo01
+                port:
+                  number: 80
+

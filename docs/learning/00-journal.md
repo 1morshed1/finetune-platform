@@ -10,6 +10,9 @@ concepts, the code, and the tradeoffs. Read them in order.
 | 3 | [03-orchestration-and-training](03-orchestration-and-training.md) | Job orchestrator, the pluggable trainer (simulated + real LoRA), metric logging |
 | 4 | [04-registry-and-deploy](04-registry-and-deploy.md) | Model registry with lineage, evaluation vs base, deployment backends |
 | 5 | [05-api-and-dashboard](05-api-and-dashboard.md) | FastAPI routers, SSE log streaming, the dashboard |
+| 6 | [06-infrastructure](06-infrastructure.md) | Docker, Airflow DAG, K8s manifests — the real backends the local ones stand in for |
+
+See also [`../architecture.md`](../architecture.md) for the one-page system map.
 
 ## The one big idea
 

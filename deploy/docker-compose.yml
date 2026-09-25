@@ -1,0 +1,38 @@
+# Local-ish "production shaped" stack.
+#
+# By default this runs just the platform (the control plane) with a persistent
+# volume. Uncomment the `mlflow` service to point the registry at a real MLflow
+# tracking server (see deploy/README.md for wiring). Real GPU training and K8s
+# serving are out of scope for compose — see deploy/k8s/ and deploy/airflow/.
+
+services:
+  platform:
+    build:
+      context: ..
+      dockerfile: Dockerfile
+    image: finetune-platform:latest
+    ports:
+      - "8000:8000"
+    environment:
+      FTP_DATA_DIR: /data
+      FTP_TRAINER_BACKEND: sim      # switch to 'hf' on a GPU host with the [ml] extra
+      FTP_DEPLOY_BACKEND: local
+    volumes:
+      - ftp_data:/data
+    restart: unless-stopped
+
+  # --- Optional: real experiment tracking / model registry -----------------
+  # mlflow:
+  #   image: ghcr.io/mlflow/mlflow:latest
+  #   command: >-
+  #     mlflow server --host 0.0.0.0 --port 5000
+  #     --backend-store-uri sqlite:////mlflow/mlflow.db
+  #     --artifacts-destination /mlflow/artifacts
+  #   ports:
+  #     - "5000:5000"
+  #   volumes:
+  #     - mlflow_data:/mlflow
+
+volumes:
+  ftp_data:
+  # mlflow_data:

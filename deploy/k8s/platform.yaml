@@ -1,0 +1,77 @@
+# The Fine-Tuning Platform control plane (API + dashboard) on Kubernetes.
+#
+# This deploys the *platform* itself. Model-serving deployments are rendered
+# per-model at deploy time by ftp.deploy.k8s (see a sample it produces in
+# deploy/k8s/model-serving.example.yaml).
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: finetune-platform
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: ftp-data
+  namespace: finetune-platform
+spec:
+  accessModes: ["ReadWriteOnce"]
+  resources:
+    requests:
+      storage: 5Gi
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ftp-api
+  namespace: finetune-platform
+spec:
+  replicas: 1               # control plane; SQLite state -> single writer
+  selector:
+    matchLabels:
+      app: ftp-api
+  template:
+    metadata:
+      labels:
+        app: ftp-api
+    spec:
+      containers:
+        - name: api
+          image: finetune-platform:latest
+          ports:
+            - containerPort: 8000
+          env:
+            - name: FTP_DATA_DIR
+              value: /data
+            - name: FTP_TRAINER_BACKEND
+              value: sim          # 'hf' would move to a GPU worker, not this pod
+            - name: FTP_DEPLOY_BACKEND
+              value: k8s
+          volumeMounts:
+            - name: data
+              mountPath: /data
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 8000
+            initialDelaySeconds: 5
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8000
+            initialDelaySeconds: 15
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: ftp-data
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ftp-api
+  namespace: finetune-platform
+spec:
+  selector:
+    app: ftp-api
+  ports:
+    - port: 80
+      targetPort: 8000
