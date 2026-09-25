@@ -1,0 +1,28 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+build/
+dist/
+.venv/
+venv/
+
+# Env / secrets
+.env
+*.local
+
+# Test / tooling caches
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.coverage
+htmlcov/
+
+# Local platform state (SQLite DB, uploaded datasets, model artifacts, logs).
+# These are runtime data, not source. Kept out of git.
+data_store/*
+!data_store/.gitkeep
+
+# OS junk
+.DS_Store
