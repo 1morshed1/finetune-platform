@@ -52,6 +52,14 @@ class Settings(BaseSettings):
     max_low_quality_ratio: float = Field(default=0.10)
     near_duplicate_threshold: float = Field(default=0.85)  # Jaccard sim for MinHash
 
+    # --- Evaluation gate --------------------------------------------------
+    # A fine-tuned model must beat the base model's validation loss by at least
+    # this *relative* amount to be registered as a success. Below it, the job is
+    # marked "completed_below_threshold" — the model is still stored (for
+    # inspection) but flagged. This is the platform refusing to call a
+    # non-improvement a win. See ADR 0003 / docs concepts "evaluate vs base".
+    eval_min_relative_improvement: float = Field(default=0.05)  # 5%
+
     # --- Cost model (USD) -------------------------------------------------
     # Rough public-ish rates used only for *estimates* in the quality report.
     # Documented as estimates in the UI; not billing.
