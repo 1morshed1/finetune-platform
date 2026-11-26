@@ -1,4 +1,4 @@
-# Learning Journal — index
+# Build Journal — index
 
 The platform was built in phases. Each phase has its own entry with the
 concepts, the code, and the tradeoffs. Read them in order.
@@ -16,7 +16,7 @@ See also [`../architecture.md`](../architecture.md) for the one-page system map.
 
 ## The one big idea
 
-A **platform** is not a script. The plan says this explicitly. The whole project
+A **platform** is not a script. The spec says this explicitly. The whole project
 is an exercise in the difference:
 
 - A *script* fine-tunes one model on one dataset.

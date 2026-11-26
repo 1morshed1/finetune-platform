@@ -1,18 +1,21 @@
 # Fine-Tuning Platform (FTP)
 
+[![CI](https://github.com/1morshed1/finetune-platform/actions/workflows/ci.yml/badge.svg)](https://github.com/1morshed1/finetune-platform/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+
 **Fine-Tuning Pipeline as a Service.** Upload a dataset, pick a base model, set
 hyperparameters — the platform validates the data, orchestrates a training job,
 tracks metrics, registers the resulting model, and deploys it behind an
 inference endpoint.
 
-This is a portfolio / learning project. It is built to **run on a laptop with no
+It is built to **run on a laptop with no
 GPU**: the training step is a *simulated trainer* by default that produces
 realistically-shaped loss curves, and every piece of heavy infrastructure
 (Airflow, Kubernetes, vLLM, MLflow) has a lightweight local stand-in plus
 documentation on how to wire the real thing.
 
 > **New here? Start with [`docs/README.md`](docs/README.md).** The `docs/`
-> folder is written as a course: a learning journal, architecture decision
+> folder holds a build journal, architecture decision
 > records, and deep-dives on each subsystem. The code is the reference; the docs
 > explain *why* it looks the way it does.
 
@@ -87,14 +90,14 @@ src/ftp/
   deploy/           Deployment backends (local sim + K8s manifests)
   api/routes/       FastAPI routers
 frontend/           Dashboard (single-page, no build step)
-docs/               Learning journal, ADRs, subsystem deep-dives
+docs/               Build journal, ADRs, subsystem deep-dives
 deploy/             Dockerfile, docker-compose, k8s/, airflow/
 tests/              pytest suite
 ```
 
 ## Status
 
-Built in phases; see the [learning journal](docs/learning/00-journal.md) for the
+Built in phases; see the [build journal](docs/learning/00-journal.md) for the
 running log of what was built and why.
 
 ## License

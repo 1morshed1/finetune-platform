@@ -1,6 +1,6 @@
 """The training orchestrator — a DAG as a state machine.
 
-The plan describes an Airflow DAG with these steps:
+The spec describes an Airflow DAG with these steps:
 
     prepare → train → evaluate → register → notify
 
@@ -80,10 +80,15 @@ def run_job(job_id: str) -> None:
             """Persist a log line and publish it live."""
             session.add(JobLog(job_id=job.id, level=level, message=message))
             session.flush()
-            broker.publish(job.id, {
-                "type": "log", "level": level, "message": message,
-                "ts": _now().isoformat(),
-            })
+            broker.publish(
+                job.id,
+                {
+                    "type": "log",
+                    "level": level,
+                    "message": message,
+                    "ts": _now().isoformat(),
+                },
+            )
 
         def on_event(ev: TrainEvent) -> None:
             nonlocal last_step_ts
@@ -108,11 +113,19 @@ def run_job(job_id: str) -> None:
                 avg = sum(step_times[-20:]) / len(step_times[-20:])
                 job.eta_seconds = round(remaining * avg, 1)
 
-            broker.publish(job.id, {
-                "type": "metric", "step": ev.step, "total_steps": ev.total_steps,
-                "loss": ev.loss, "eval_loss": ev.eval_loss, "lr": ev.lr,
-                "progress": job.progress, "eta_seconds": job.eta_seconds,
-            })
+            broker.publish(
+                job.id,
+                {
+                    "type": "metric",
+                    "step": ev.step,
+                    "total_steps": ev.total_steps,
+                    "loss": ev.loss,
+                    "eval_loss": ev.eval_loss,
+                    "lr": ev.lr,
+                    "progress": job.progress,
+                    "eta_seconds": job.eta_seconds,
+                },
+            )
             # Persist the growing curve periodically so a page refresh mid-run
             # shows progress (not just at completion).
             if ev.step % 5 == 0 or ev.step == ev.total_steps:
@@ -146,28 +159,28 @@ def run_job(job_id: str) -> None:
 
             # --- Step 3: EVALUATE -----------------------------------------
             _set_status(session, job, JobStatus.EVALUATING)
-            comparison = evaluate_against_base(
-                spec, result, settings.eval_min_relative_improvement
-            )
+            comparison = evaluate_against_base(spec, result, settings.eval_min_relative_improvement)
             log(f"[evaluate] {comparison['verdict']}")
 
             # --- Step 4: REGISTER -----------------------------------------
             _set_status(session, job, JobStatus.REGISTERING)
             model = register_model(
-                session, job=job,
+                session,
+                job=job,
                 final_metrics=result.final_metrics,
                 comparison=comparison,
                 artifact_path=result.artifact_path,
                 passed=comparison["passed"],
             )
             job.model_id = model.id
-            log(f"[register] Registered model {model.id} "
-                f"({model.name} v{model.version}) status={model.status}")
+            log(
+                f"[register] Registered model {model.id} "
+                f"({model.name} v{model.version}) status={model.status}"
+            )
 
             # --- Step 5: NOTIFY / finalize --------------------------------
             job.status = (
-                JobStatus.COMPLETED if comparison["passed"]
-                else JobStatus.COMPLETED_BELOW_THRESHOLD
+                JobStatus.COMPLETED if comparison["passed"] else JobStatus.COMPLETED_BELOW_THRESHOLD
             )
             job.progress = 1.0
             job.eta_seconds = 0.0
@@ -202,9 +215,14 @@ def _prepare(dataset: Dataset, settings) -> tuple[list[dict], list[dict]]:
 def _set_status(session, job: Job, status: str) -> None:
     job.status = status
     session.flush()
-    broker.publish(job.id, {
-        "type": "status", "status": status, "progress": job.progress,
-    })
+    broker.publish(
+        job.id,
+        {
+            "type": "status",
+            "status": status,
+            "progress": job.progress,
+        },
+    )
 
 
 def _fail(session, job: Job, message: str) -> None:

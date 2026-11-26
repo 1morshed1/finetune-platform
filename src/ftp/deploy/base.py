@@ -19,7 +19,7 @@ from ftp.db import ModelRecord
 @dataclass
 class DeployResult:
     backend: str
-    status: str                     # "live" | "failed"
+    status: str  # "live" | "failed"
     endpoint_url: str | None
     canary_percent: int = 100
     detail: dict = field(default_factory=dict)  # rendered manifest / notes / errors
@@ -30,5 +30,4 @@ class Deployer(Protocol):
 
     def deploy(
         self, model: ModelRecord, deployment_id: str, canary_percent: int = 100
-    ) -> DeployResult:
-        ...
+    ) -> DeployResult: ...

@@ -22,8 +22,10 @@ def _endpoint_or_404(deployment_id: str):
     if ep is None:
         raise HTTPException(
             status_code=404,
-            detail=("Endpoint not found or not live in this process. "
-                    "Re-deploy the model (in-process endpoints don't survive restarts)."),
+            detail=(
+                "Endpoint not found or not live in this process. "
+                "Re-deploy the model (in-process endpoints don't survive restarts)."
+            ),
         )
     return ep
 

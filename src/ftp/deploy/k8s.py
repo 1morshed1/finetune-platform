@@ -125,7 +125,9 @@ class K8sDeployer:
                 applied = True
             except Exception as e:
                 return DeployResult(
-                    backend="k8s", status="failed", endpoint_url=None,
+                    backend="k8s",
+                    status="failed",
+                    endpoint_url=None,
                     canary_percent=canary_percent,
                     detail={"manifest_path": str(out), "error": str(e)},
                 )

@@ -5,7 +5,7 @@
 
 ## Context
 
-The plan names specific infrastructure: **Airflow** for orchestration, **MLflow**
+The spec names specific infrastructure: **Airflow** for orchestration, **MLflow**
 for the registry, **Kubernetes + vLLM** for deployment. Standing all of that up
 is a multi-day devops exercise and needs a cluster. It would drown the actual
 learning (how does a fine-tuning platform *work*?) in YAML.

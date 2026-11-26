@@ -35,9 +35,7 @@ async def get_model_route(model_id: str, db: Session = Depends(get_db)):
 
 
 @router.post("/{model_id}/deploy")
-async def deploy_model(
-    model_id: str, req: DeployRequest, db: Session = Depends(get_db)
-):
+async def deploy_model(model_id: str, req: DeployRequest, db: Session = Depends(get_db)):
     m = db.get(ModelRecord, model_id)
     if m is None:
         raise HTTPException(status_code=404, detail="Model not found")
@@ -45,7 +43,9 @@ async def deploy_model(
     backend = req.backend or get_settings().deploy_backend
     # Create the DB row first so its id is the endpoint's routing key.
     dep = Deployment(
-        model_id=m.id, backend=backend, status="deploying",
+        model_id=m.id,
+        backend=backend,
+        status="deploying",
         canary_percent=req.canary_percent,
     )
     db.add(dep)
@@ -67,9 +67,7 @@ async def deploy_model(
 
 
 @router.post("/{model_id}/evaluate")
-async def evaluate_model(
-    model_id: str, req: EvaluateRequest, db: Session = Depends(get_db)
-):
+async def evaluate_model(model_id: str, req: EvaluateRequest, db: Session = Depends(get_db)):
     """Re-run the base-vs-fine-tuned comparison.
 
     With no prompts, returns the comparison computed at training time (stored on
@@ -84,10 +82,16 @@ async def evaluate_model(
     settings = get_settings()
     # Rebuild a minimal spec + result from stored metrics so the evaluator can run.
     history = (job.metrics or {}).get("history", []) if job else []
-    spec = TrainSpec(job_id=m.job_id, base_model=m.base_model, train_examples=[],
-                     val_examples=[], hyperparameters=m.hyperparameters)
-    result = TrainResult(final_metrics=m.metrics or {}, artifact_path=m.artifact_path,
-                         history=history)
+    spec = TrainSpec(
+        job_id=m.job_id,
+        base_model=m.base_model,
+        train_examples=[],
+        val_examples=[],
+        hyperparameters=m.hyperparameters,
+    )
+    result = TrainResult(
+        final_metrics=m.metrics or {}, artifact_path=m.artifact_path, history=history
+    )
     comparison = evaluate_against_base(spec, result, settings.eval_min_relative_improvement)
 
     out = {"model_id": m.id, "comparison": comparison}

@@ -5,8 +5,8 @@
 
 ## Context
 
-This is a learning project. The *decisions* matter as much as the code, because
-the goal is to understand *why* an ML platform is shaped the way it is. Six
+The *decisions* matter as much as the code, because
+the goal is to make clear *why* an ML platform is shaped the way it is. Six
 months from now the reasoning behind a choice is invisible in the code itself.
 
 ## Decision

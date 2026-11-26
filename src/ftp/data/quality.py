@@ -1,6 +1,6 @@
 """Per-example quality scoring.
 
-The plan calls for "quality scoring (use perplexity from a small model)". That is
+The spec calls for "quality scoring (use perplexity from a small model)". That is
 the *ideal*: run each example through a small LM and use its perplexity — high
 perplexity means the text is weird/noisy/low-quality. But that needs the ``[ml]``
 extra and a model download, so it can't be the default (ADR 0002).
@@ -14,7 +14,7 @@ So we provide two scorers behind one function:
 
 Both return a score in ``[0, 1]`` where higher = better, so the rest of the
 pipeline treats them identically. An example scoring below a threshold (default
-0.3, from the plan) is flagged "low quality" for human review — never deleted
+0.3, from the spec) is flagged "low quality" for human review — never deleted
 automatically. A platform advises; the user decides.
 """
 

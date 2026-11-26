@@ -37,7 +37,9 @@ def create_app() -> FastAPI:
     # Permissive CORS: this is a local, single-user tool. Tighten for real deploys.
     app.add_middleware(
         CORSMiddleware,
-        allow_origins=["*"], allow_methods=["*"], allow_headers=["*"],
+        allow_origins=["*"],
+        allow_methods=["*"],
+        allow_headers=["*"],
     )
 
     for module in (datasets, jobs, models, endpoints):

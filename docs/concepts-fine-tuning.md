@@ -29,7 +29,7 @@ Updating *all* billions of weights (full fine-tuning) needs enormous GPU memory
 
 The output of LoRA training is that little **adapter**, not a whole new model.
 At inference you load the base model once and snap different adapters onto it —
-which is exactly why the plan mentions "LoRA adapter hot-loading".
+which is exactly why the spec mentions "LoRA adapter hot-loading".
 
 **QLoRA** = LoRA + the frozen base model quantized to 4-bit, so it fits in even
 less GPU memory. Same idea, smaller footprint.

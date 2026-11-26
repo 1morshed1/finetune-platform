@@ -1,6 +1,6 @@
 """LocalDeployer — serve a model inside this process.
 
-The plan's deployment step loads "base model + LoRA adapter into an inference
+The spec's deployment step loads "base model + LoRA adapter into an inference
 server (vLLM/Ollama)" on Kubernetes. Locally we do the conceptually-identical
 thing without a cluster: register an in-process **endpoint** that can answer
 generation requests, and expose it at a URL the API serves
@@ -56,10 +56,14 @@ class LocalEndpoint:
         dashboard's side-by-side panel."""
         return {
             "prompt": prompt,
-            "base": {"model": self.base_model,
-                     "completion": self._mock_generate(prompt, finetuned=False)},
-            "finetuned": {"model": self.model_name,
-                          "completion": self._mock_generate(prompt, finetuned=True)},
+            "base": {
+                "model": self.base_model,
+                "completion": self._mock_generate(prompt, finetuned=False),
+            },
+            "finetuned": {
+                "model": self.model_name,
+                "completion": self._mock_generate(prompt, finetuned=True),
+            },
             "note": "Mock generations for demonstration unless the [ml] extra is installed.",
         }
 

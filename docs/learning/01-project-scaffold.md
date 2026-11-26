@@ -51,7 +51,7 @@ separation is exactly what the big platforms do (a metadata DB + object storage)
 we just use a file and a folder instead of Postgres + S3. See
 [ADR 0004](../adr/0004-local-first-infrastructure.md).
 
-The five tables map directly to the lifecycle in the plan:
+The five tables map directly to the lifecycle in the spec:
 
 ```
 Dataset ──▶ Job ──▶ ModelRecord ──▶ Deployment

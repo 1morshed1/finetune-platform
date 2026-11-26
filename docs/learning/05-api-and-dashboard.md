@@ -56,7 +56,7 @@ charting library. It plots train loss and eval loss vs step, rescaling live as S
 metric events arrive. Writing it by hand (coordinate transforms, gridlines, two
 series) is ~40 lines and worth understanding once; you see exactly how a line
 chart maps data-space to pixel-space. The "base vs fine-tuned" playground and the
-leaderboard round out the plan's dashboard requirements.
+leaderboard round out the spec's dashboard requirements.
 
 ### Static frontend, mounted last
 The dashboard is plain files served by `StaticFiles(html=True)`, mounted at `/`

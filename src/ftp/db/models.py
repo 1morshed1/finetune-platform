@@ -43,19 +43,19 @@ class Base(DeclarativeBase):
 
 
 class DatasetStatus:
-    UPLOADED = "uploaded"        # bytes stored, not yet validated
-    VALIDATING = "validating"    # validation pipeline running
-    READY = "ready"              # validated, quality report attached
-    REJECTED = "rejected"        # failed hard validation (e.g. not JSONL)
+    UPLOADED = "uploaded"  # bytes stored, not yet validated
+    VALIDATING = "validating"  # validation pipeline running
+    READY = "ready"  # validated, quality report attached
+    REJECTED = "rejected"  # failed hard validation (e.g. not JSONL)
 
 
 class JobStatus:
     QUEUED = "queued"
-    PREPARING = "preparing"      # DAG step 1: format data for the trainer
-    TRAINING = "training"        # DAG step 2: the training loop
-    EVALUATING = "evaluating"    # DAG step 3: score vs base model
+    PREPARING = "preparing"  # DAG step 1: format data for the trainer
+    TRAINING = "training"  # DAG step 2: the training loop
+    EVALUATING = "evaluating"  # DAG step 3: score vs base model
     REGISTERING = "registering"  # DAG step 4: write to model registry
-    COMPLETED = "completed"                      # met the eval threshold
+    COMPLETED = "completed"  # met the eval threshold
     COMPLETED_BELOW_THRESHOLD = "completed_below_threshold"  # ran, but not good enough
     FAILED = "failed"
 
@@ -112,9 +112,7 @@ class Job(Base):
     finished_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
 
     dataset: Mapped[Dataset] = relationship(back_populates="jobs")
-    logs: Mapped[list[JobLog]] = relationship(
-        back_populates="job", cascade="all, delete-orphan"
-    )
+    logs: Mapped[list[JobLog]] = relationship(back_populates="job", cascade="all, delete-orphan")
 
 
 class JobLog(Base):
@@ -146,7 +144,7 @@ class ModelRecord(Base):
     version: Mapped[int] = mapped_column(Integer, default=1)
 
     hyperparameters: Mapped[dict] = mapped_column(JSON, default=dict)
-    metrics: Mapped[dict] = mapped_column(JSON, default=dict)          # final training/eval metrics
+    metrics: Mapped[dict] = mapped_column(JSON, default=dict)  # final training/eval metrics
     comparison_vs_base: Mapped[dict | None] = mapped_column(JSON, nullable=True)
     # Path to the LoRA adapter / weights on disk.
     artifact_path: Mapped[str | None] = mapped_column(String, nullable=True)

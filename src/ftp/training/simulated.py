@@ -63,15 +63,17 @@ class SimulatedTrainer:
         # Overfitting pressure: small datasets overfit, large ones don't.
         overfit = max(0.0, 0.5 - 0.1 * math.log10(len(spec.train_examples) + 1))
 
-        on_event(TrainEvent(
-            kind="log",
-            message=(
-                f"Starting LoRA fine-tune of {spec.base_model} | "
-                f"{len(spec.train_examples)} train / {len(spec.val_examples)} val examples | "
-                f"epochs={spec.epochs} batch={spec.batch_size} lr={spec.learning_rate} "
-                f"lora_r={spec.lora_r} | {total} steps"
-            ),
-        ))
+        on_event(
+            TrainEvent(
+                kind="log",
+                message=(
+                    f"Starting LoRA fine-tune of {spec.base_model} | "
+                    f"{len(spec.train_examples)} train / {len(spec.val_examples)} val examples | "
+                    f"epochs={spec.epochs} batch={spec.batch_size} lr={spec.learning_rate} "
+                    f"lora_r={spec.lora_r} | {total} steps"
+                ),
+            )
+        )
 
         history: list[dict] = []
         eval_interval = max(1, total // 10)  # ~10 eval points across the run
@@ -91,16 +93,25 @@ class SimulatedTrainer:
                 gap = 0.05 + overfit * progress_frac
                 last_eval_loss = round(loss + gap + rng.uniform(0, 0.02), 4)
                 point["eval_loss"] = last_eval_loss
-                on_event(TrainEvent(
-                    kind="log", level="info",
-                    message=f"step {step}/{total}  loss={loss:.4f}  eval_loss={last_eval_loss:.4f}",
-                ))
+                on_event(
+                    TrainEvent(
+                        kind="log",
+                        level="info",
+                        message=f"step {step}/{total}  loss={loss:.4f}  eval_loss={last_eval_loss:.4f}",
+                    )
+                )
 
             history.append(point)
-            on_event(TrainEvent(
-                kind="metric", step=step, total_steps=total,
-                loss=loss, eval_loss=point.get("eval_loss"), lr=spec.learning_rate,
-            ))
+            on_event(
+                TrainEvent(
+                    kind="metric",
+                    step=step,
+                    total_steps=total,
+                    loss=loss,
+                    eval_loss=point.get("eval_loss"),
+                    lr=spec.learning_rate,
+                )
+            )
             if self.step_delay:
                 time.sleep(self.step_delay)
 
@@ -129,9 +140,11 @@ class SimulatedTrainer:
             artifact_path=str(art_dir),
             history=history,
         )
-        on_event(TrainEvent(
-            kind="log",
-            message=f"Training complete. final eval_loss={final_eval:.4f} "
-                    f"perplexity={result.final_metrics['perplexity']:.2f}",
-        ))
+        on_event(
+            TrainEvent(
+                kind="log",
+                message=f"Training complete. final eval_loss={final_eval:.4f} "
+                f"perplexity={result.final_metrics['perplexity']:.2f}",
+            )
+        )
         return result

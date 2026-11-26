@@ -1,6 +1,6 @@
 # Phase 3 — orchestration & the pluggable trainer
 
-**Goal:** turn a validated dataset into a registered model by running the plan's
+**Goal:** turn a validated dataset into a registered model by running the spec's
 DAG — `prepare → train → evaluate → register → notify` — with a trainer that runs
 on any laptop but can be swapped for real LoRA.
 

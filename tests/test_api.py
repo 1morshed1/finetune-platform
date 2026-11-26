@@ -27,8 +27,10 @@ def client(isolated_store):
 
 def _sample_jsonl(n: int = 40) -> bytes:
     rows = [
-        {"prompt": f"Q{i}: explain topic {i} simply.",
-         "completion": f"Topic {i} is explained here as example {i}."}
+        {
+            "prompt": f"Q{i}: explain topic {i} simply.",
+            "completion": f"Topic {i} is explained here as example {i}.",
+        }
         for i in range(n)
     ]
     return "\n".join(json.dumps(r) for r in rows).encode()
@@ -87,10 +89,14 @@ def test_get_missing_dataset_404(client):
 
 def test_fine_tune_lifecycle(client):
     ds = _upload(client)
-    r = client.post("/api/v1/fine-tune", json={
-        "dataset_id": ds["id"], "base_model": "demo",
-        "hyperparameters": {"epochs": 2, "batch_size": 8},
-    })
+    r = client.post(
+        "/api/v1/fine-tune",
+        json={
+            "dataset_id": ds["id"],
+            "base_model": "demo",
+            "hyperparameters": {"epochs": 2, "batch_size": 8},
+        },
+    )
     assert r.status_code == 200
     job_id = r.json()["id"]
 
@@ -118,8 +124,9 @@ def test_fine_tune_requires_ready_dataset(client):
 
 def test_leaderboard_deploy_and_compare(client):
     ds = _upload(client)
-    job_id = client.post("/api/v1/fine-tune", json={
-        "dataset_id": ds["id"], "hyperparameters": {"epochs": 2}}).json()["id"]
+    job_id = client.post(
+        "/api/v1/fine-tune", json={"dataset_id": ds["id"], "hyperparameters": {"epochs": 2}}
+    ).json()["id"]
     job = _wait_terminal(client, job_id)
     model_id = job["model_id"]
 

@@ -19,16 +19,28 @@ from pathlib import Path
 def _sample_rows(n: int = 60) -> list[dict]:
     """A small synthetic instruction dataset (with a couple of intentional
     duplicates so the quality report has something to flag)."""
-    topics = ["gravity", "photosynthesis", "recursion", "inflation", "vaccines",
-              "encryption", "evolution", "tides", "black holes", "entropy"]
+    topics = [
+        "gravity",
+        "photosynthesis",
+        "recursion",
+        "inflation",
+        "vaccines",
+        "encryption",
+        "evolution",
+        "tides",
+        "black holes",
+        "entropy",
+    ]
     rows = []
     for i in range(n):
         t = topics[i % len(topics)]
-        rows.append({
-            "prompt": f"Q{i}: Explain {t} in one clear sentence for a beginner (context {i}).",
-            "completion": f"{t.capitalize()} is a concept best understood as example number {i}.",
-            "label": t,
-        })
+        rows.append(
+            {
+                "prompt": f"Q{i}: Explain {t} in one clear sentence for a beginner (context {i}).",
+                "completion": f"{t.capitalize()} is a concept best understood as example number {i}.",
+                "label": t,
+            }
+        )
     # Inject 3 exact duplicates to demonstrate dedup detection.
     rows.extend(rows[:3])
     return rows
@@ -84,15 +96,24 @@ def cmd_demo(args: argparse.Namespace) -> int:
     print(f"  recommendation    : {rep.recommendation.splitlines()[0]}")
 
     with session_scope() as s:
-        ds = Dataset(id=new_id("ds"), name="demo", filename="demo.jsonl", path=str(path),
-                     num_examples=rep.total_examples, status=DatasetStatus.READY,
-                     quality_report=rep.to_dict())
+        ds = Dataset(
+            id=new_id("ds"),
+            name="demo",
+            filename="demo.jsonl",
+            path=str(path),
+            num_examples=rep.total_examples,
+            status=DatasetStatus.READY,
+            quality_report=rep.to_dict(),
+        )
         s.add(ds)
         s.flush()
         ds_id = ds.id
-        job = Job(dataset_id=ds_id, base_model="demo", trainer_backend="sim",
-                  hyperparameters={"epochs": 3, "batch_size": 8, "learning_rate": 2e-4,
-                                   "lora_r": 8})
+        job = Job(
+            dataset_id=ds_id,
+            base_model="demo",
+            trainer_backend="sim",
+            hyperparameters={"epochs": 3, "batch_size": 8, "learning_rate": 2e-4, "lora_r": 8},
+        )
         s.add(job)
         s.flush()
         job_id = job.id
@@ -111,8 +132,9 @@ def cmd_demo(args: argparse.Namespace) -> int:
         model = s.get(ModelRecord, job.model_id) if job.model_id else None
         if model:
             cmp = model.comparison_vs_base or {}
-            print(f"  registered model  : {model.id} "
-                  f"({model.name} v{model.version}) [{model.status}]")
+            print(
+                f"  registered model  : {model.id} ({model.name} v{model.version}) [{model.status}]"
+            )
             print(f"  vs base           : {cmp.get('verdict')}")
 
     print("\n=== 3. LEADERBOARD ===")

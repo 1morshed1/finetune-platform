@@ -1,6 +1,6 @@
 """The Data Quality Report — the platform's headline artifact.
 
-This is the object the plan highlights as "the part that differentiates a platform
+This is the object the spec highlights as "the part that differentiates a platform
 from a script". Before a user spends money training, the platform hands them a
 report: how many examples, how many duplicates, token distribution, cost estimate,
 which examples look bad, and a plain-English recommendation.
@@ -49,8 +49,8 @@ class Stats:
 @dataclass
 class CostEstimate:
     total_tokens: int
-    openai_usd: float          # cost if fine-tuned via the OpenAI API
-    local_gpu_usd: float       # cost if trained on rented/spot GPU
+    openai_usd: float  # cost if fine-tuned via the OpenAI API
+    local_gpu_usd: float  # cost if trained on rented/spot GPU
     training_time_minutes: float
     notes: str = "Estimates only. Actual cost depends on epochs, model size, and provider rates."
 
@@ -91,7 +91,7 @@ def generate_recommendation(
 ) -> str:
     """Turn the raw numbers into actionable advice.
 
-    Adapted from the plan's ``generate_recommendation``, but every threshold comes
+    Adapted from the spec's ``generate_recommendation``, but every threshold comes
     from config (a platform operator tunes policy without editing code) and we also
     account for near-duplicates, not just exact ones.
     """

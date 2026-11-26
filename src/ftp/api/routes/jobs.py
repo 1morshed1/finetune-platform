@@ -101,8 +101,12 @@ async def stream_logs(job_id: str):
                 job = s.get(Job, job_id)
                 for line in job.logs:
                     yield _sse(
-                        {"type": "log", "ts": line.ts.isoformat(),
-                         "level": line.level, "message": line.message}
+                        {
+                            "type": "log",
+                            "ts": line.ts.isoformat(),
+                            "level": line.level,
+                            "message": line.message,
+                        }
                     )
             # If the job already finished before we connected, we're done.
             if already_terminal:

@@ -5,7 +5,7 @@ never built an ML platform can follow along and understand each decision.
 
 Three kinds of document:
 
-### 1. Learning journal — `learning/`
+### 1. Build journal — `learning/`
 A chronological log. Each entry covers one build phase: what I built, the
 concepts involved, the mistakes/tradeoffs, and what to read next. Start here if
 you want the story in order.

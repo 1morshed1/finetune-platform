@@ -11,8 +11,12 @@ from ftp.deploy.k8s import render_manifests
 
 def _model() -> ModelRecord:
     return ModelRecord(
-        id=new_id("model"), job_id=new_id("job"), dataset_id=new_id("ds"),
-        name="demo-ft", base_model="demo", version=1,
+        id=new_id("model"),
+        job_id=new_id("job"),
+        dataset_id=new_id("ds"),
+        name="demo-ft",
+        base_model="demo",
+        version=1,
         artifact_path="data_store/artifacts/job_x",
         metrics={"eval_loss": 0.5},
     )

@@ -67,4 +67,4 @@ target-version = "py311"
 select = ["E", "F", "I", "UP", "B"]
 # B008: calling Depends()/File()/Form() in argument defaults is the correct,
 # intended FastAPI idiom — not a bug. Ignore it project-wide.
-ignore = ["B008"]
+ignore = ["B008", "E501"]  # E501: the formatter owns line length

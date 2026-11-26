@@ -23,9 +23,7 @@ import math
 from .base import TrainResult, TrainSpec
 
 
-def evaluate_against_base(
-    spec: TrainSpec, result: TrainResult, min_rel_improvement: float
-) -> dict:
+def evaluate_against_base(spec: TrainSpec, result: TrainResult, min_rel_improvement: float) -> dict:
     history = result.history or []
     finetuned_eval = float(result.final_metrics.get("eval_loss", 0.0))
 
@@ -47,7 +45,8 @@ def evaluate_against_base(
         "finetuned_perplexity": round(math.exp(min(finetuned_eval, 20)), 3),
         "threshold": min_rel_improvement,
         "passed": passed,
-        "base_source": "step-1 proxy (simulated)" if spec.base_model in ("", "sim", "demo")
+        "base_source": "step-1 proxy (simulated)"
+        if spec.base_model in ("", "sim", "demo")
         else "step-1 proxy",
         "verdict": (
             f"Fine-tuned model improves validation loss by {rel * 100:.1f}% "

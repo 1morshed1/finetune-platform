@@ -39,8 +39,7 @@ class HFLoRATrainer:
             )
         except ImportError as e:
             raise RuntimeError(
-                "The 'hf' trainer backend requires the [ml] extra. "
-                "Install with: uv sync --extra ml"
+                "The 'hf' trainer backend requires the [ml] extra. Install with: uv sync --extra ml"
             ) from e
 
         # Fall back to a small CPU-friendly model if the spec didn't name a real
@@ -88,19 +87,31 @@ class HFLoRATrainer:
                 loss = logs.get("loss")
                 eval_loss = logs.get("eval_loss")
                 if loss is not None or eval_loss is not None:
-                    point = {"step": step, "loss": loss, "eval_loss": eval_loss,
-                             "lr": logs.get("learning_rate", spec.learning_rate)}
+                    point = {
+                        "step": step,
+                        "loss": loss,
+                        "eval_loss": eval_loss,
+                        "lr": logs.get("learning_rate", spec.learning_rate),
+                    }
                     history.append(point)
-                    on_event(TrainEvent(
-                        kind="metric", step=step, total_steps=spec.total_steps,
-                        loss=loss, eval_loss=eval_loss, lr=point["lr"],
-                    ))
-                    on_event(TrainEvent(
-                        kind="log",
-                        message=f"step {step}/{spec.total_steps} " +
-                                (f"loss={loss:.4f} " if loss else "") +
-                                (f"eval_loss={eval_loss:.4f}" if eval_loss else ""),
-                    ))
+                    on_event(
+                        TrainEvent(
+                            kind="metric",
+                            step=step,
+                            total_steps=spec.total_steps,
+                            loss=loss,
+                            eval_loss=eval_loss,
+                            lr=point["lr"],
+                        )
+                    )
+                    on_event(
+                        TrainEvent(
+                            kind="log",
+                            message=f"step {step}/{spec.total_steps} "
+                            + (f"loss={loss:.4f} " if loss else "")
+                            + (f"eval_loss={eval_loss:.4f}" if eval_loss else ""),
+                        )
+                    )
 
         args = TrainingArguments(
             output_dir=str(art_dir / "checkpoints"),
@@ -114,7 +125,10 @@ class HFLoRATrainer:
             seed=spec.seed,
         )
         trainer = Trainer(
-            model=model, args=args, train_dataset=train_ds, eval_dataset=val_ds,
+            model=model,
+            args=args,
+            train_dataset=train_ds,
+            eval_dataset=val_ds,
             callbacks=[_EventCallback()],
         )
         trainer.train()

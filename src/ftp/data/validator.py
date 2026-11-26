@@ -36,9 +36,9 @@ REQUIRED_FIELDS = ("prompt", "completion")
 
 @dataclass
 class ValidationResult:
-    status: str                       # "ready" | "rejected"
+    status: str  # "ready" | "rejected"
     report: DataQualityReport
-    examples: list[dict] = field(default_factory=list)   # parsed, valid rows
+    examples: list[dict] = field(default_factory=list)  # parsed, valid rows
     train_indices: list[int] = field(default_factory=list)
     val_indices: list[int] = field(default_factory=list)
 
@@ -145,13 +145,22 @@ def validate_examples(
     # If nothing parsed, reject early with an empty-but-valid report shell.
     if total == 0:
         report = DataQualityReport(
-            total_examples=0, unique_examples=0, exact_duplicates=0, near_duplicates=0,
-            near_duplicate_pairs=[], prompt_token_stats=Stats.from_values([]),
-            completion_token_stats=Stats.from_values([]), low_quality_examples=[],
-            quality_method="n/a", tokenizer=tokenizer_name(),
-            cost=_estimate_cost(0, settings), train_size=0, val_size=0,
+            total_examples=0,
+            unique_examples=0,
+            exact_duplicates=0,
+            near_duplicates=0,
+            near_duplicate_pairs=[],
+            prompt_token_stats=Stats.from_values([]),
+            completion_token_stats=Stats.from_values([]),
+            low_quality_examples=[],
+            quality_method="n/a",
+            tokenizer=tokenizer_name(),
+            cost=_estimate_cost(0, settings),
+            train_size=0,
+            val_size=0,
             recommendation="No valid examples found. Fix the format errors and re-upload.",
-            passed=False, format_errors=format_errors,
+            passed=False,
+            format_errors=format_errors,
         )
         return ValidationResult(status="rejected", report=report)
 
@@ -185,8 +194,11 @@ def validate_examples(
 
     # Step 7: report.
     recommendation = generate_recommendation(
-        total=total, unique=unique_prompts, low_quality=len(low_quality),
-        near_dupes=near_dupes, min_examples=settings.min_examples,
+        total=total,
+        unique=unique_prompts,
+        low_quality=len(low_quality),
+        near_dupes=near_dupes,
+        min_examples=settings.min_examples,
         max_examples_warn=settings.max_examples_warn,
         max_duplicate_ratio=settings.max_duplicate_ratio,
         max_low_quality_ratio=settings.max_low_quality_ratio,
@@ -210,8 +222,11 @@ def validate_examples(
         format_errors=format_errors,
     )
     return ValidationResult(
-        status="ready", report=report, examples=examples,
-        train_indices=train_idx, val_indices=val_idx,
+        status="ready",
+        report=report,
+        examples=examples,
+        train_indices=train_idx,
+        val_indices=val_idx,
     )
 
 

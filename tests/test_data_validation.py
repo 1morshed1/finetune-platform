@@ -38,7 +38,7 @@ def test_count_tokens_monotonic():
 def test_find_near_duplicates_catches_small_edits():
     texts = [
         "the quick brown fox jumps over the lazy dog",
-        "the quick brown fox jumps over the lazy dog!",   # near-dup of 0
+        "the quick brown fox jumps over the lazy dog!",  # near-dup of 0
         "completely different sentence about databases and indexing",
     ]
     pairs = find_near_duplicates(texts, threshold=0.6)
@@ -48,7 +48,7 @@ def test_find_near_duplicates_catches_small_edits():
 
 
 def test_find_near_duplicates_none_when_all_distinct():
-    texts = [f"unique sentence number {i} about topic {i*7}" for i in range(10)]
+    texts = [f"unique sentence number {i} about topic {i * 7}" for i in range(10)]
     assert find_near_duplicates(texts, threshold=0.85) == []
 
 
@@ -56,7 +56,9 @@ def test_find_near_duplicates_none_when_all_distinct():
 
 
 def test_good_dataset_is_ready():
-    examples = [_ex(f"Question {i}: what is {i}+{i}?", f"The answer is {i+i}.") for i in range(20)]
+    examples = [
+        _ex(f"Question {i}: what is {i}+{i}?", f"The answer is {i + i}.") for i in range(20)
+    ]
     res = validate_examples(examples, _settings(), format_errors=[])
     assert res.status == "ready"
     assert res.report.total_examples == 20
@@ -92,10 +94,9 @@ def test_low_quality_flagged():
 
 def test_stratified_split_preserves_labels():
     # 20 label-A, 20 label-B. A 10% val split should draw from both.
-    examples = (
-        [_ex(f"a{i}", f"ca{i}", label="A") for i in range(20)]
-        + [_ex(f"b{i}", f"cb{i}", label="B") for i in range(20)]
-    )
+    examples = [_ex(f"a{i}", f"ca{i}", label="A") for i in range(20)] + [
+        _ex(f"b{i}", f"cb{i}", label="B") for i in range(20)
+    ]
     res = validate_examples(examples, _settings(), format_errors=[])
     val_labels = {examples[i]["label"] for i in res.val_indices}
     assert val_labels == {"A", "B"}
@@ -123,7 +124,7 @@ def test_validate_file_collects_format_errors(tmp_path):
     p = tmp_path / "data.jsonl"
     lines = [
         json.dumps(_ex("valid prompt one", "valid completion one")),
-        "{not json",                                  # bad JSON
+        "{not json",  # bad JSON
         json.dumps({"prompt": "missing completion"}),  # missing field
         json.dumps(_ex("valid prompt two", "valid completion two")),
     ]

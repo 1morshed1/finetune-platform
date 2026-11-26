@@ -1,6 +1,6 @@
 # Phase 2 — the data-validation pipeline
 
-**Goal:** implement the subsystem the plan calls out as what "differentiates a
+**Goal:** implement the subsystem the spec calls out as what "differentiates a
 platform from a script" — decide whether a dataset is worth training on, before
 spending a cent.
 

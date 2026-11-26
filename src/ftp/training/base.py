@@ -79,8 +79,8 @@ class TrainEvent:
 class TrainResult:
     """The outcome handed back to the orchestrator."""
 
-    final_metrics: dict           # {"train_loss", "eval_loss", "perplexity", ...}
-    artifact_path: str | None     # where the adapter/weights were written
+    final_metrics: dict  # {"train_loss", "eval_loss", "perplexity", ...}
+    artifact_path: str | None  # where the adapter/weights were written
     history: list[dict] = field(default_factory=list)  # per-step metric dicts
 
 
@@ -93,5 +93,4 @@ class Trainer(Protocol):
 
     backend: str
 
-    def train(self, spec: TrainSpec, on_event: EventSink) -> TrainResult:
-        ...
+    def train(self, spec: TrainSpec, on_event: EventSink) -> TrainResult: ...

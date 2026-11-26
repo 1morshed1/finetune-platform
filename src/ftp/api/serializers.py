@@ -49,8 +49,7 @@ def job_dict(job: Job, *, include_logs: bool = False) -> dict:
     }
     if include_logs:
         d["logs"] = [
-            {"ts": _iso(line.ts), "level": line.level, "message": line.message}
-            for line in job.logs
+            {"ts": _iso(line.ts), "level": line.level, "message": line.message} for line in job.logs
         ]
     return d
 

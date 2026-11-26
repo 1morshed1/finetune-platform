@@ -43,6 +43,7 @@ def prepare(**ctx):
     job_id = ctx["dag_run"].conf["job_id"]
     with session_scope() as s:
         from ftp.db import Job
+
         job = s.get(Job, job_id)
         ds = s.get(Dataset, job.dataset_id)
         res = validate_file(Path(ds.path), get_settings())
@@ -70,7 +71,7 @@ def register(**ctx):
 
 
 def notify(**ctx):
-    # Send a webhook / email with the result. See the plan's "notify" step.
+    # Send a webhook / email with the result. See the spec's "notify" step.
     return ctx["dag_run"].conf["job_id"]
 
 
@@ -83,7 +84,7 @@ if DAG is not None:
     with DAG(
         dag_id="fine_tune_job",
         description="Fine-tune a model: prepare -> train -> evaluate -> register -> notify",
-        schedule=None,                 # triggered by the platform, not on a cron
+        schedule=None,  # triggered by the platform, not on a cron
         start_date=datetime(2024, 1, 1),
         catchup=False,
         default_args=default_args,

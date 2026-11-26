@@ -43,13 +43,13 @@ isn't there.
 
 ### Canary is just two annotations
 `model-serving.example.yaml` (generated, not hand-written) shows the canary
-deploy from the plan compiles down to
+deploy from the spec compiles down to
 `nginx.ingress.kubernetes.io/canary-weight: "10"`. Seeing the generated YAML makes
 the abstract "route 10% of traffic" concrete.
 
-## Where the plan landed
+## Where the spec landed
 
-Every box in the plan's architecture diagram now maps to code:
+Every box in the spec's architecture diagram now maps to code:
 
 - **API (FastAPI)** → `src/ftp/api` ✓
 - **Data validation pipeline** → `src/ftp/data` ✓ (the differentiator)

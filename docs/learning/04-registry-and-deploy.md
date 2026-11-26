@@ -24,7 +24,7 @@ because the DAG's `register` step needs it. See `registry/registry.py`.)
 the local stand-in for a service mesh's routing table — and the API serves it at
 `/api/v1/endpoints/{id}/generate`. `K8sDeployer` renders the real thing: a
 `Deployment` running vLLM with the LoRA adapter mounted, a `Service`, and an
-`Ingress` with the **canary weight** annotation the plan calls for. Both satisfy
+`Ingress` with the **canary weight** annotation the spec calls for. Both satisfy
 the same `Deployer.deploy(model, deployment_id, canary) -> DeployResult`.
 
 The key detail: the API creates the `Deployment` DB row id and *passes it in*, so

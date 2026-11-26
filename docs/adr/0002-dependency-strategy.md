@@ -39,5 +39,5 @@ it's missing.
 ## Alternatives considered
 
 - **Everything in core** — too heavy, not runnable for learners, slow CI.
-- **Two separate packages** — overkill for a portfolio project; extras are the
+- **Two separate packages** — overkill at this scale; extras are the
   standard Python idiom for exactly this.

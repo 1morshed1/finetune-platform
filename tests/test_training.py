@@ -18,14 +18,21 @@ def _seed_dataset(n: int = 40) -> str:
     settings.ensure_dirs()
     path = settings.datasets_dir / "seed.jsonl"
     rows = [
-        {"prompt": f"Question {i}: define term number {i}.",
-         "completion": f"Term {i} is a distinct concept explained clearly here."}
+        {
+            "prompt": f"Question {i}: define term number {i}.",
+            "completion": f"Term {i} is a distinct concept explained clearly here.",
+        }
         for i in range(n)
     ]
     path.write_text("\n".join(json.dumps(r) for r in rows), encoding="utf-8")
     with session_scope() as s:
-        ds = Dataset(name="seed", filename="seed.jsonl", path=str(path),
-                     num_examples=n, status=DatasetStatus.READY)
+        ds = Dataset(
+            name="seed",
+            filename="seed.jsonl",
+            path=str(path),
+            num_examples=n,
+            status=DatasetStatus.READY,
+        )
         s.add(ds)
         s.flush()
         return ds.id
@@ -33,8 +40,12 @@ def _seed_dataset(n: int = 40) -> str:
 
 def _make_job(dataset_id: str, **hp) -> str:
     with session_scope() as s:
-        job = Job(dataset_id=dataset_id, base_model="demo", trainer_backend="sim",
-                  hyperparameters=hp or {"epochs": 2, "batch_size": 8})
+        job = Job(
+            dataset_id=dataset_id,
+            base_model="demo",
+            trainer_backend="sim",
+            hyperparameters=hp or {"epochs": 2, "batch_size": 8},
+        )
         s.add(job)
         s.flush()
         return job.id
@@ -46,7 +57,8 @@ def _make_job(dataset_id: str, **hp) -> str:
 def test_simulated_trainer_loss_decreases():
     trainer = SimulatedTrainer(step_delay=0)
     spec = TrainSpec(
-        job_id="job_test", base_model="demo",
+        job_id="job_test",
+        base_model="demo",
         train_examples=[{"prompt": f"p{i}", "completion": f"c{i}"} for i in range(32)],
         val_examples=[{"prompt": "pv", "completion": "cv"}],
         hyperparameters={"epochs": 3, "batch_size": 8},
@@ -97,9 +109,13 @@ def test_run_job_marks_failed_on_missing_file(isolated_store):
     # Dataset row points at a non-existent file -> prepare/train should fail
     # gracefully, not hang.
     with session_scope() as s:
-        ds = Dataset(name="broken", filename="nope.jsonl",
-                     path="/does/not/exist.jsonl", num_examples=10,
-                     status=DatasetStatus.READY)
+        ds = Dataset(
+            name="broken",
+            filename="nope.jsonl",
+            path="/does/not/exist.jsonl",
+            num_examples=10,
+            status=DatasetStatus.READY,
+        )
         s.add(ds)
         s.flush()
         ds_id = ds.id
@@ -111,8 +127,11 @@ def test_run_job_marks_failed_on_missing_file(isolated_store):
         job = s.get(Job, job_id)
         # No valid examples -> either failed or completed with nothing; must not hang
         # and must record a terminal state.
-        assert job.status in (JobStatus.FAILED, JobStatus.COMPLETED,
-                              JobStatus.COMPLETED_BELOW_THRESHOLD)
+        assert job.status in (
+            JobStatus.FAILED,
+            JobStatus.COMPLETED,
+            JobStatus.COMPLETED_BELOW_THRESHOLD,
+        )
         assert job.finished_at is not None
 
 

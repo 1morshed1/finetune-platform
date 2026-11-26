@@ -52,7 +52,7 @@ pre-training corpora.
 
 ## Quality scoring: honest about its limits
 
-The plan says "use perplexity from a small model". We do — *if* the `[ml]` extra
+The spec says "use perplexity from a small model". We do — *if* the `[ml]` extra
 is installed (`quality.py::_perplexity_scores` runs distilgpt2). Otherwise we fall
 back to a **heuristic blend** (length sanity × lexical repetition × character
 junk). The heuristic is not as good as real perplexity, and the code says so. The
